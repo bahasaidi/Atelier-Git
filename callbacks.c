@@ -7,392 +7,16 @@
 #include "callbacks.h"
 #include "interface.h"
 #include "support.h"
-#include "menu.h"
-#include "dechet.h"
+#include "reclamation.h"
+#include <stdlib.h>
+#include <string.h>
 
-
-
+int x = 1;
+int supp =0;
+int ajout;
+int service;
 void
-on_buttonModifMenu_clicked          (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *ModifierMenu;
-GtkWidget *windowMenu;
-windowMenu = lookup_widget(button, "windowGestionMenu");
-gtk_widget_destroy(windowMenu);
-ModifierMenu = create_ModifierMenu();
-gtk_widget_show(ModifierMenu);
-
-}
-
-
-void
-on_buttonSupprimeMenu_clicked       (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *windowSupprimer;
-GtkWidget *windowMenu;
-GtkWidget *treeview;
-windowMenu = lookup_widget(button, "windowGestionMenu");
-gtk_widget_destroy(windowMenu);
-windowSupprimer = create_windowSupprimeMenu();
-gtk_widget_show(windowSupprimer);
-treeview = lookup_widget (windowSupprimer, "treeview");
-afficher_menu(treeview);
-}
-
-
-void
-on_buttonAjoutMenu_clicked          (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *windowAjout;
-GtkWidget *windowMenu;
-windowMenu = lookup_widget(button,"windowGestionMenu");
-gtk_widget_destroy(windowMenu);
-
-windowAjout = lookup_widget(button,"windowAjoutMenu");
-windowAjout = create_windowAjoutMenu();
-gtk_widget_show(windowAjout);
-}
-
-
-void
-on_buttonAcceuil_clicked               (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *windowSupprimer;
-GtkWidget *windowMenu;
-GtkWidget *windowAjoutMenu;
-GtkWidget *windowModifier;
-GtkWidget *ListeMenus;
-
-windowSupprimer = lookup_widget(button, "windowSupprimeMenu");
-gtk_widget_destroy(windowSupprimer);
-
-windowModifier = lookup_widget(button, "windowModifierMenu");
-gtk_widget_destroy(windowModifier);
-
-windowAjoutMenu = lookup_widget(button, "windowAjoutMenu");
-gtk_widget_destroy(windowAjoutMenu);
-ListeMenus = lookup_widget(button, "ListeMenus");
-gtk_widget_destroy(ListeMenus);
-
-windowMenu = create_windowGestionMenu();
-gtk_widget_show(windowMenu);
-
-}
-
-
-void
-on_buttonDeconnexin_clicked            (GtkButton       *button,
-                                        gpointer         user_data)
-{
-
-}
-
-
-gboolean
-on_treeview_start_interactive_search   (GtkTreeView     *treeview,
-                                        gpointer         user_data)
-{
-
-  return FALSE;
-}
-
-
-void
-on_buttonDeconnexion_clicked           (GtkButton       *button,
-                                        gpointer         user_data)
-{
-
-}
-
-char tmps[30];
-void
-on_buttonModif_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
-{
-Menu m;
-GtkWidget *input1;
-GtkWidget *windowModification;
-FILE *fp;
-fp = fopen("temp1.txt", "r");
-input1 = lookup_widget(button, "entryID");
-strcpy(tmps,gtk_entry_get_text(GTK_ENTRY(input1)));
-windowModification = create_ModifierMenu();
-gtk_widget_show(windowModification);
-
-GtkWidget *output1, *output2, *output3, *output4, *output5, *output6;
-if(fp!=NULL)
-{
-while (fread(&m, sizeof(m), 1, fp))
-{
-	output1 = lookup_widget(windowModification, "entryMOdifierId");
-	gtk_entry_set_text(GTK_ENTRY(output1), m.id);
-
-	output2 = lookup_widget(windowModification, "entryModifierRepas");
-	gtk_entry_set_text(GTK_ENTRY(output2), m.repas);
-
-	output3 = lookup_widget(windowModification, "entryModifierQD");
-	gtk_entry_set_text(GTK_ENTRY(output3), m.qd);
-
-	/*output4 = lookup_widget(windowModification, "spinbuttonJour");
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(output4), m.date_creation.jour);
-
-
-	output5 = lookup_widget(windowModification, "spinbuttonMois");
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(output5), m.date_creation.mois);
-
-
-	output6 = lookup_widget(windowModification, "spinbuttonMAnnee");
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(output6), m.date_creation.annee);*/
-
-}
-}
-
-fclose(fp);
-}
-
-
-void
-on_buttonSupprimer_clicked             (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *windowConfirmation;
-char id[30];
-char type[30];
-Menu m;
-GtkWidget *input1;
-input1= lookup_widget(button, "entryID");
-strcpy(id, gtk_entry_get_text(GTK_ENTRY(input1)));
-supprimer_menu(m,id,type);
-windowConfirmation = create_dialog3();
-gtk_widget_show(windowConfirmation);
-}
-
-int c1=0;
-void
-on_buttonConfirmerModif_clicked        (GtkButton       *button,
-                                        gpointer         user_data)
-{
-Menu m;
-FILE *fp1;
-fp1 = fopen("menu.txt", "r");
-char j[30];
-char q[30];
-char a[30];
-
-GtkWidget *input1;
-GtkWidget *input2;
-GtkWidget *input3;
-GtkWidget *Jour;
-GtkWidget *Mois;
-GtkWidget *Annee;
-GtkWidget *windowErreur;
-GtkWidget *windowSuccees;
-GtkWidget *ModifierMenu;
-
-
-input1 = lookup_widget(button, "entryMOdifierId");
-input2 = lookup_widget(button, "entryModifierRepas");
-input3 = lookup_widget(button, "entryModifierQD");
-Jour = lookup_widget(button, "spinbuttonJours");
-Mois = lookup_widget(button, "spinbuttonMois");
-Annee = lookup_widget(button, "spinbuttonAnnees");
-
-
-strcpy(m.id,gtk_entry_get_text(GTK_ENTRY(input1)));
-strcpy(m.repas,gtk_entry_get_text(GTK_ENTRY(input2)));
-strcpy(m.qd,gtk_entry_get_text(GTK_ENTRY(input3)));
-
-if (c1==1)
-strcpy(m.type,"Dejuner");
-else if (c1==2)
-strcpy(m.type,"Diner");
-
-
-sprintf(m.date_creation.jour,"%d",gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Jour)));
-sprintf(m.date_creation.mois,"%d",gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Mois)));
-sprintf(m.date_creation.annee,"%d",gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Annee)));
-
-if( (c1==0) && (strcmp(m.id,"")==0) && (strcmp(m.repas,"")==0) && (strcmp(m.qd,"")==0))
-{
-windowErreur = create_windowRemplir();
-gtk_widget_show(windowErreur);
-}
-else
-{
-modifier_menu(m,tmps);
-windowSuccees = create_dialog2();
-gtk_widget_show(windowSuccees);
-ModifierMenu = lookup_widget(button, "ModifierMenu");
-
-}
-
-}
-
-
-void
-on_checkbuttonDejeuner_toggled         (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-c1=1;
-
-}
-
-
-void
-on_checkbuttonDiner_toggled      (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-c1=2;
-
-}
-
-
-void
-on_okbutton1_clicked                   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *window;
-window = lookup_widget(button, "dialog1");
-gtk_widget_destroy(window);
-}
-
-
-void
-on_okbutton2_clicked                   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *window;
-window = lookup_widget(button, "dialog2");
-gtk_widget_destroy(window);
-
-}
-
-
-void
-on_okbutton3_clicked                   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *window;
-window = lookup_widget(button, "dialog3");
-gtk_widget_destroy(window);
-
-}
-
-
-void
-on_okbutton4_clicked                   (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *window;
-window = lookup_widget(button, "windowRemplir");
-gtk_widget_destroy(window);
-
-}
-
-
-
-int c=0;
-
-void
-on_buttonAjouter_clicked               (GtkButton       *button,
-                                        gpointer         user_data)
-{
-Menu m;
-Menu r;
-FILE *fp1;
-char j[30];
-char q[30];
-char a[30];
-
-fp1 = fopen("menu.txt", "r");
-
-GtkWidget *input1;
-GtkWidget *input2;
-GtkWidget *input3;
-GtkWidget *input4;
-GtkWidget *Jour;
-GtkWidget *Mois;
-GtkWidget *Annee;
-GtkWidget *windowRemplir;
-GtkWidget *windowConfirmation;
-
-
-input1 = lookup_widget(button, "entryId_ajout");
-input3 = lookup_widget(button, "entryQD_ajout");
-input4 = lookup_widget(button, "entryRepas_ajout");
-Jour = lookup_widget(button, "spinbuttonJours_ajout");
-Mois = lookup_widget(button, "spinbuttonMois_ajout");
-Annee = lookup_widget(button, "spinbuttonAnnees_ajout");
-strcpy(m.id,gtk_entry_get_text(GTK_ENTRY(input1)));
-strcpy(m.qd,gtk_entry_get_text(GTK_ENTRY(input3)));
-strcpy(m.repas,gtk_entry_get_text(GTK_ENTRY(input4)));
-
-
-sprintf(j,"%d",gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Jour)));
-sprintf(q,"%d",gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Mois)));
-sprintf(a,"%d",gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Annee)));
-
-
-
-if (c==1)
-{
-strcpy(m.type,"Dejeuner");
-}
-else if (c==2)
-{
-strcpy(m.type,"Diner");
-}
-
-sprintf(m.date_creation.jour,"%d", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Jour)));
-sprintf(m.date_creation.mois,"%d", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Mois)));
-sprintf(m.date_creation.annee,"%d", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Annee)));
-
-
-ajouter_menu(m);
-fclose(fp1);
-windowConfirmation = create_dialog1();
-gtk_widget_show(windowConfirmation);
-
-
-
-}
-
-
-
-
-
-void
-on_radiobutton2_toggled                (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-c=2;
-
-}
-
-
-void
-on_radiobutton1_toggled                (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-c=1;
-
-}
-
-
-
-
-
-
-
-
-void
-on_treeview4_row_activated             (GtkTreeView     *treeview,
-                                        GtkTreePath     *path,
-                                        GtkTreeViewColumn *column,
+on_button_deconnexion_gestion_clicked  (GtkButton       *button,
                                         gpointer         user_data)
 {
 
@@ -400,262 +24,495 @@ on_treeview4_row_activated             (GtkTreeView     *treeview,
 
 
 void
-on_Actualiser_clicked                  (GtkButton       *button,
+on_button_retour_liste_clicked         (GtkButton       *button,
                                         gpointer         user_data)
-
 {
+GtkWidget* window2_liste;
+GtkWidget* windowmenu;
 
+window2_liste=lookup_widget(button,"window2_liste");
+gtk_widget_destroy(window2_liste);
+windowmenu=create_windowmenu();
+gtk_widget_show(windowmenu);
 }
 
 
 void
-on_button16_clicked                    (GtkButton       *button,
+on_button_rechercher_liste_clicked     (GtkButton       *button,
                                         gpointer         user_data)
 {
-GtkWidget *treeview;
-GtkWidget *listeMenus;
-GtkWidget *window;
-listeMenus = create_ListeMenus();
-gtk_widget_show(listeMenus);
-treeview = lookup_widget(listeMenus, "treeview");
-afficher_menu(treeview);
-window = lookup_widget(button,"windowGestionMenu");
-gtk_widget_destroy(window);
+	GtkWidget *window2_liste;
+	GtkWidget *treeview3;
+	GtkWidget *entry1;
+
+
+	window2_liste = lookup_widget(button,"window2_liste");
+	treeview3 = lookup_widget(window2_liste,"treeview3");
+	entry1 = lookup_widget(window2_liste,"entry1");
+
+	rechercher_reclamation(treeview3, gtk_entry_get_text(GTK_ENTRY(entry1)));
 }
 
 
 void
-on_treeview_row_activated              (GtkTreeView     *treeview,
-                                        GtkTreePath     *path,
-                                        GtkTreeViewColumn *column,
+on_button_supprimer_supprission_clicked
+                                        (GtkButton       *button,
                                         gpointer         user_data)
 {
+	GtkWidget *window3_supp;
+	GtkWidget *entry2;
+	GtkWidget *label_supp_message;
 
+	window3_supp = lookup_widget(button,"window3_supp");
+	entry2 = lookup_widget(window3_supp,"entry2");
+	label_supp_message = lookup_widget(window3_supp,"label_supp_message");
+
+	if(supp == 1)
+	{
+		supprimer_reclamation(gtk_entry_get_text(GTK_ENTRY(entry2)));
+		gtk_label_set_text(GTK_LABEL(label_supp_message),"reclamation supprimée avec succès!");
+		gtk_widget_show(label_supp_message);
+	}
+	else if(supp == 0)
+	{
+		gtk_label_set_text(GTK_LABEL(label_supp_message),"Confirmer la suppression !");
+		gtk_widget_show(label_supp_message);
+	}
 }
 
 
 void
-on_buttonRetouur_clicked               (GtkButton       *button,
+on_button_retour_suppression_clicked   (GtkButton       *button,
                                         gpointer         user_data)
 {
-GtkWidget *windowSupprimer;
-GtkWidget *windowMenu;
-GtkWidget *windowAjoutMenu;
-GtkWidget *windowModifier;
-GtkWidget *ListeMenus;
+GtkWidget* window3_supp;
+GtkWidget* windowmenu;
 
-windowSupprimer = lookup_widget(button, "windowSupprimeMenu");
-gtk_widget_destroy(windowSupprimer);
+window3_supp=lookup_widget(button,"window3_supp");
+gtk_widget_destroy(window3_supp);
 
-windowModifier = lookup_widget(button, "windowModifierMenu");
-gtk_widget_destroy(windowModifier);
-
-windowAjoutMenu = lookup_widget(button, "windowAjoutMenu");
-gtk_widget_destroy(windowAjoutMenu);
-ListeMenus = lookup_widget(button, "ListeMenus");
-gtk_widget_destroy(ListeMenus);
-
-windowMenu = create_windowGestionMenu();
-gtk_widget_show(windowMenu);
-
+windowmenu=create_windowmenu();
+gtk_widget_show(windowmenu);
 }
 
 
 void
-on_buttonRetour_clicked                (GtkButton       *button,
+on_button_Affichier_supprission_clicked
+                                        (GtkButton       *button,
                                         gpointer         user_data)
 {
-GtkWidget *windowSupprimer;
-GtkWidget *windowMenu;
-GtkWidget *windowAjoutMenu;
-GtkWidget *windowModifier;
-GtkWidget *ListeMenus;
+GtkWidget *windowsupp;
+GtkWidget *windowgestion;
+GtkWidget *treeview1;
 
-windowSupprimer = lookup_widget(button, "windowSupprimeMenu");
-gtk_widget_destroy(windowSupprimer);
+windowsupp=lookup_widget(button,"window3_supp");
+gtk_widget_destroy(windowsupp);
 
-windowModifier = lookup_widget(button, "windowModifierMenu");
-gtk_widget_destroy(windowModifier);
+windowgestion=lookup_widget(button,"window1_gestion");
+windowgestion=create_window1_gestion();
+gtk_widget_show(windowgestion);
 
-windowAjoutMenu = lookup_widget(button, "windowAjoutMenu");
-gtk_widget_destroy(windowAjoutMenu);
-ListeMenus = lookup_widget(button, "ListeMenus");
-gtk_widget_destroy(ListeMenus);
+treeview1=lookup_widget(windowgestion,"treeview1");
+afficher_reclamation(treeview1);
 
-windowMenu = create_windowGestionMenu();
-gtk_widget_show(windowMenu);
+}
 
+void
+on_button_ajouter_ajout_clicked        (GtkButton       *button,
+                                        gpointer         user_data)
+{ 
+   reclamation r;
+   GtkWidget *id;
+   GtkWidget *reff;
+   GtkWidget *prec;
+   GtkWidget *texte;
+   GtkWidget *Jour;
+   GtkWidget *Mois;
+   GtkWidget *Annee;
+
+  
+   GtkWidget *ComboboxZoCov;
+   GtkWidget *label_ajut_reussite; 
+   int ajout,verif;
+   char text[200];
+
+  
+  
+label_ajut_reussite = lookup_widget(button,"label_ajut_reussite");
+id=lookup_widget(button,"entry_id_ajout");
+
+strcpy(r.id,gtk_entry_get_text(GTK_ENTRY(id)));
+
+/////////////////////////////////////////////////////////
+Jour=lookup_widget(button,"spinbutton1_ajout");
+Mois=lookup_widget(button,"spinbutton2_ajout");
+Annee=lookup_widget(button,"spinbutton3_ajout");
+r.Jour=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Jour));
+r.Mois=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Mois));
+r.Annee=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Annee));
+///////////////////////////////////////////////////////////
+texte=lookup_widget(button,"entry_valmin_ajout");
+strcpy(r.texte,gtk_entry_get_text(GTK_ENTRY(texte)));
+ComboboxZoCov=lookup_widget(button,"combobox1");
+strcpy(r.prec,gtk_combo_box_get_active_text(GTK_COMBO_BOX(ComboboxZoCov)));
+///////////////////////////////////////////////////////////////////////////
+strcpy(r.reff,"Hebergement");
+if(x==1)
+{strcpy(r.reff,"Hebergement");}
+if(x==2)
+{strcpy(r.reff,"Restauration");}
+
+
+ajout=ajouter_reclamation(r);
+gtk_widget_show(label_ajut_reussite);
+ }
+
+void
+on_button_retour_ajout_clicked         (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* window4_ajout;
+GtkWidget* windowmenu;
+
+window4_ajout=lookup_widget(button,"window4_ajout");
+gtk_widget_destroy(window4_ajout);
+
+windowmenu=create_windowmenu();
+gtk_widget_show(windowmenu);
 }
 
 
 void
-on_button17modifier_clicked            (GtkButton       *button,
-                                        gpointer         user_data)
-
-{
-Menu m;
-GtkWidget *input1;
-GtkWidget *windowModification;
-FILE *fp;
-fp = fopen("temp1.txt", "r");
-input1 = lookup_widget(button, "entryID");
-strcpy(tmps,gtk_entry_get_text(GTK_ENTRY(input1)));
-windowModification = create_ModifierMenu();
-gtk_widget_show(windowModification);
-
-GtkWidget *output1, *output2, *output3, *output4, *output5, *output6;
-if(fp!=NULL)
-{
-while (fread(&m, sizeof(m), 1, fp))
-{
-	output1 = lookup_widget(windowModification, "entryMOdifierId");
-	gtk_entry_set_text(GTK_ENTRY(output1), m.id);
-
-	output2 = lookup_widget(windowModification, "entryModifierRepas");
-	gtk_entry_set_text(GTK_ENTRY(output2), m.repas);
-
-	output3 = lookup_widget(windowModification, "entryModifierQD");
-	gtk_entry_set_text(GTK_ENTRY(output3), m.qd);
-
-	/*output4 = lookup_widget(windowModification, "spinbuttonJour");
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(output4), m.date_creation.jour);
-
-
-	output5 = lookup_widget(windowModification, "spinbuttonMois");
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(output5), m.date_creation.mois);
-
-
-	output6 = lookup_widget(windowModification, "spinbuttonMAnnee");
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(output6), m.date_creation.annee);*/
-
-}
-}
-
-fclose(fp);
-}
-
-
-void
-on_button18retouuuur_clicked           (GtkButton       *button,
+on_button_affichier_modification_clicked
+                                        (GtkButton       *button,
                                         gpointer         user_data)
 {
-GtkWidget *windowSupprimer;
-GtkWidget *windowMenu;
-GtkWidget *windowAjoutMenu;
-GtkWidget *ModifierMenu;
-GtkWidget *ListeMenus;
+GtkWidget *windowmodif;
+GtkWidget *windowgestion;
+GtkWidget *treeview1;
 
-windowSupprimer = lookup_widget(button, "windowSupprimeMenu");
-gtk_widget_destroy(windowSupprimer);
+windowmodif=lookup_widget(button,"window5_modif");
+gtk_widget_destroy(windowmodif);
 
-ModifierMenu = lookup_widget(button, "ModifierMenu");
-gtk_widget_destroy(ModifierMenu);
+windowgestion=lookup_widget(button,"window1_gestion");
+windowgestion=create_window1_gestion();
+gtk_widget_show(windowgestion);
 
-windowAjoutMenu = lookup_widget(button, "windowAjoutMenu");
-gtk_widget_destroy(windowAjoutMenu);
-ListeMenus = lookup_widget(button, "ListeMenus");
-gtk_widget_destroy(ListeMenus);
-
-windowMenu = create_windowGestionMenu();
-gtk_widget_show(windowMenu);
-
-}
-
-
-void
-on_buttonReeeeeeeeetour_clicked        (GtkButton       *button,
-                                        gpointer         user_data)
-{
-GtkWidget *windowSupprimer;
-GtkWidget *windowMenu;
-GtkWidget *windowAjoutMenu;
-GtkWidget *windowModifier;
-GtkWidget *ListeMenus;
-
-windowSupprimer = lookup_widget(button, "windowSupprimeMenu");
-gtk_widget_destroy(windowSupprimer);
-
-windowModifier = lookup_widget(button, "windowModifierMenu");
-gtk_widget_destroy(windowModifier);
-
-windowAjoutMenu = lookup_widget(button, "windowAjoutMenu");
-gtk_widget_destroy(windowAjoutMenu);
-ListeMenus = lookup_widget(button, "ListeMenus");
-gtk_widget_destroy(ListeMenus);
-
-windowMenu = create_windowGestionMenu();
-gtk_widget_show(windowMenu);
-
-}
-
-
-
-
-void
-on_afficher_meuilleur_m_clicked        (GtkButton       *objet,
-                                        gpointer         user_data)
-{
-
-
-GtkWidget *windowMenu ;
-GtkWidget *meilleur;
-windowMenu=lookup_widget(objet,"windowMenu");
-gtk_widget_destroy(windowMenu);
-meilleur=lookup_widget(objet,"meilleur");
-meilleur=create_meilleur();
-gtk_widget_show(meilleur);
-
-
-}
-
-
-
-
-
-
-
-void
-on_treeview2_nutrition_row_activated   (GtkTreeView     *treeview2_nutrition,
-                                        GtkTreePath     *path,
-                                        GtkTreeViewColumn *column,
-                                        gpointer         user_data)
-{
-
-
-
-GtkTreeIter iter;
-gchar *jour;
-gchar *temps;
-gfloat *valeur;
-dechet D;
- GtkTreeModel *model=gtk_tree_view_get_model(treeview2_nutrition);
-if (gtk_tree_model_get_iter(model,&iter ,path))
-{
-gtk_tree_model_get (GTK_LIST_STORE(model),&iter,0,&jour,1,&temps,3,&valeur,-1);
-
-afficher_meilleure_menu(treeview2_nutrition);
-}
+treeview1=lookup_widget(windowgestion,"treeview1");
+afficher_reclamation(treeview1);
 
 
 }
 
 
 void
-on_button_afficher_meilleur_M_clicked  (GtkButton       *objet,
+on_button_modifier_modification_clicked
+                                        (GtkButton       *button,
+                                        gpointer         user_data)
+{  reclamation r;
+   GtkWidget *id;
+   GtkWidget *reff;
+   GtkWidget *prec;
+   GtkWidget *texte;
+   GtkWidget *Jour;
+   GtkWidget *Mois;
+   GtkWidget *Annee;
+   GtkWidget *label44; 
+   GtkWidget *ComboboxZoCov;
+
+  
+GtkWidget *window5_modif;
+
+window5_modif=lookup_widget(button,"window5_modif");
+
+id=lookup_widget(button,"entry_id_modif");
+
+strcpy(r.id,gtk_entry_get_text(GTK_ENTRY(id)));
+
+/////////////////////////////////////////////////////////
+Jour=lookup_widget(button,"spinbutton4_modif");
+Annee=lookup_widget(button,"spinbutton5_modif");
+Mois=lookup_widget(button,"spinbutton6_modif");
+r.Jour=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Jour));
+r.Mois=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Mois));
+r.Annee=gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(Annee));
+///////////////////////////////////////////////////////////
+texte=lookup_widget(button,"entry_valmin_modif");
+strcpy(r.texte,gtk_entry_get_text(GTK_ENTRY(texte)));
+ComboboxZoCov=lookup_widget(button,"combobox2");
+
+
+strcpy(r.prec,gtk_combo_box_get_active_text(GTK_COMBO_BOX(ComboboxZoCov)));
+///////////////////////////////////////////////////////////////////////////
+strcpy(r.reff,"Hebergement");
+if(x==1)
+{strcpy(r.reff,"Hebergement");}
+
+if(x==2)
+{strcpy(r.reff,"Restauration");}
+
+
+modifier_reclamation(r);
+
+}
+
+
+void
+on_button_retour_modification_clicked  (GtkButton       *button,
                                         gpointer         user_data)
 {
+GtkWidget* window5_modif;
+GtkWidget* windowmenu;
+
+window5_modif=lookup_widget(button,"window5_modif");
+gtk_widget_destroy(window5_modif);
+
+windowmenu=create_windowmenu();
+gtk_widget_show(windowmenu);
+}
 
 
-GtkWidget *meilleur;
-GtkWidget *treeview2_nutrition;
-meilleur=lookup_widget(objet,"meilleur");
-gtk_widget_show(meilleur);
-treeview2_nutrition=lookup_widget(meilleur,"treeview2_nutrition");
-afficher_meilleure_menu(treeview2_nutrition);
+void
+on_radiobutton_temp_ajout_toggled      (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton)))
+{
+x=1;
+}
+
+}
+
+void
+on_radiobutton_fumee_ajout_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton)))
+{
+x=2;
+}
+}
+void
+on_radiobutton_temp_moodif_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton)))
+{
+x=1;
+}
+
+}
 
 
+void
+on_radiobutton_fum_modif_toggled       (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+if(gtk_toggle_button_get_active(GTK_RADIO_BUTTON(togglebutton)))
+{
+x=2;
+}
+
+}
+
+void
+on_checkbutton_supp_toggled            (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+	if(gtk_toggle_button_get_active(togglebutton)){
+		supp = 1;
+	} else {
+		supp = 0;
+	}
+}
 
 
+void
+on_Service_clicked                     (GtkButton       *objet,
+                                        gpointer         user_data)
+{
+        reclamation r;
+        int result;
+	char res[120];
+	strcpy(res,"Le sevice le plus reclamé est :");
+	GtkWidget *dash;
+	GtkWidget *Res;
+	
+	dash= lookup_widget(objet,"dash");
+	Res= lookup_widget(dash,"Res");
+
+	result = service_plus();
+	if(result == 1)
+	{
+		sprintf(res,"%s Restauration",res);
+	} 
+	else 
+	{
+		sprintf(res,"%s Hebergement",res);
+	}
+	gtk_label_set_text(GTK_LABEL(Res),res);
+
+}
+
+void
+on_afficher_ajout_clicked              (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *windowajout;
+GtkWidget *windowgestion;
+GtkWidget *treeview1;
+
+windowajout=lookup_widget(button,"window4_ajout");
+gtk_widget_destroy(windowajout);
+
+windowgestion=lookup_widget(button,"window1_gestion");
+windowgestion=create_window1_gestion();
+gtk_widget_show(windowgestion);
+
+treeview1=lookup_widget(windowgestion,"treeview1");
+afficher_reclamation(treeview1);
+
+}
+
+
+void
+on_button1_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* input;
+GtkWidget* output;
+GtkWidget* windowmenu;
+windowmenu=lookup_widget(button,"windowmenu");
+gtk_widget_destroy(windowmenu);
+
+GtkWidget* window4_ajout;
+window4_ajout=create_window4_ajout();
+gtk_widget_show(window4_ajout);
+
+}
+
+
+void
+on_button2_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* input;
+GtkWidget* output;
+GtkWidget* window1;
+window1=lookup_widget(button,"windowmenu");
+gtk_widget_destroy(window1);
+
+GtkWidget* window5_modif;
+
+window5_modif=create_window5_modif();
+gtk_widget_show(window5_modif);
+
+}
+
+
+void
+on_button3_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget *windowmenu;
+GtkWidget *windowgestion;
+GtkWidget *treeview1;
+
+windowmenu=lookup_widget(button,"windowmenu");
+gtk_widget_destroy(windowmenu);
+
+windowgestion=lookup_widget(button,"window1_gestion");
+windowgestion=create_window1_gestion();
+gtk_widget_show(windowgestion);
+
+treeview1=lookup_widget(windowgestion,"treeview1");
+afficher_reclamation(treeview1);
+
+}
+
+
+void
+on_button4_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* input;
+GtkWidget* output;
+GtkWidget* windowmenu;
+windowmenu=lookup_widget(button,"windowmenu");
+gtk_widget_destroy(windowmenu);
+GtkWidget* window2_liste;
+window2_liste=create_window2_liste();
+gtk_widget_show(window2_liste);
+}
+
+
+void
+on_button5_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* input;
+GtkWidget* output;
+GtkWidget* windowmenu;
+windowmenu=lookup_widget(button,"windowmenu");
+gtk_widget_destroy(windowmenu);
+GtkWidget* window3_supp;
+window3_supp=create_window3_supp();
+gtk_widget_show(window3_supp);
+
+}
+
+
+void
+on_button6_clicked                     (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* input;
+GtkWidget* output;
+GtkWidget* windowmenu;
+
+windowmenu=lookup_widget(button,"windowmenu");
+gtk_widget_destroy(windowmenu);
+GtkWidget* dash;
+dash=create_dash();
+gtk_widget_show(dash);
+
+}
+
+
+void
+on_retour_dash_clicked                 (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* window_dash;
+GtkWidget* windowmenu;
+
+window_dash=lookup_widget(button,"dash");
+gtk_widget_destroy(window_dash);
+windowmenu=create_windowmenu();
+gtk_widget_show(windowmenu);
+
+}
+
+
+void
+on_retour_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+GtkWidget* window1_gestion;
+GtkWidget* windowmenu;
+
+window1_gestion=lookup_widget(button,"window1_gestion");
+gtk_widget_destroy(window1_gestion);
+windowmenu=create_windowmenu();
+gtk_widget_show(windowmenu);
+
+}
+
+
+void
+on_button_rechercher_liste_clicked     (GtkButton       *button,
+                                        gpointer         user_data)
+{
 
 }
 
